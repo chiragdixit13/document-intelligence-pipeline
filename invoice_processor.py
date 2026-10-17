@@ -163,8 +163,9 @@ def llm_process(all_text):
         the document content from where the given info to be extracted it is :{all_text}"""
 
         try:
-            str_llm = llm.with_structured_output(Invoice, method="json_schema")
-            result = str_llm.invoke(prompt)
+            str_llm=llm.with_structured_output(Invoice)
+
+            result=str_llm.invoke(prompt)
             # print(result)
             # print(result.model_dump())
 
