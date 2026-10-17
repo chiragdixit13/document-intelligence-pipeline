@@ -156,6 +156,9 @@ async def upload(file: UploadFile=File(...),conn=Depends(get_db)):
         conn.rollback()
         raise HTTPException(status_code=409, detail="Invoice already exists")
     except Exception as e:
+        print("UPLOAD ERROR:", repr(e), flush=True)
+        import traceback
+        traceback.print_exc()
         if 'name' in locals() and os.path.exists(name):    
             os.remove(name)
         conn.rollback()
