@@ -28,24 +28,34 @@ app.add_middleware(
 load_dotenv()
 print("ENV loaded:", os.getenv("DB_PASSWORD") is not None)
 
-connection = {
-    "host": "localhost",
-    "port": 5432,
-    "dbname": "invoice_intelligence",
-    "user": "postgres",
-    "password": os.getenv("DB_PASSWORD")
-}
+# connection = {
+#     "host": "localhost",
+#     "port": 5432,
+#     "dbname": "invoice_intelligence",
+#     "user": "postgres",
+#     "password": os.getenv("DB_PASSWORD")
+# }
+
 def get_db():
-    conn=psycopg.connect(**connection)
-    print("Database connected successfully")
+    database_url = os.getenv("DATABASE_URL")
+
+    if database_url:
+        conn = psycopg.connect(database_url)
+    else:
+        conn = psycopg.connect(
+            host="localhost",
+            port=5432,
+            dbname="invoice_intelligence",
+            user="postgres",
+            password=os.getenv("DB_PASSWORD")
+        )
+
     try:
         yield conn
     finally:
         conn.close()
-    
 
 @app.get("/invoices/{invoice_id}")
-
 def get_invoices(invoice_id:int,conn=Depends(get_db)):
     with conn.cursor() as cursor:
         cursor.execute("Select * from invoices where invoice_id=%s",(invoice_id,))
