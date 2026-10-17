@@ -1,5 +1,5 @@
 from langchain_community.document_loaders import PyPDFLoader
-from langchain_openai import ChatOpenAI
+from langchain_ollama import ChatOllama
 import os
 from pydantic import BaseModel
 import re
@@ -139,11 +139,15 @@ def extract_amounts_from_text(all_text):
     return [float(amount.replace(",","")) for amount in amounts]
 
 def llm_process(all_text):
-        llm = ChatOpenAI(
-        model="gemma4:31b",
-        base_url="https://ollama.com/v1",
-        api_key=os.getenv("OLLAMA_API_KEY"),
-        temperature=0
+        llm = ChatOllama(
+        model="gemma4",
+        base_url="https://ollama.com",
+        client_kwargs={
+            "headers": {
+                "Authorization": f"Bearer {os.getenv('OLLAMA_API_KEY')}"
+            }
+        },
+        think=False
         )
         
         prompt=f""" 
